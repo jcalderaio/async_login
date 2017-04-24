@@ -14,8 +14,7 @@ class LoginForm extends Component {
 			message: '',
 			color: '',
 			loadingSignIn: false,
-			loadingSignUp: false,
-			defaultValue: ''
+			loadingSignUp: false
 		};
 
 		// Functions that we pass off to promises that is going to be
@@ -49,7 +48,7 @@ class LoginForm extends Component {
 		try {
 			await AsyncStorage.getItem(key).then((value) => {
 				if (value !== null) {
-					this.setState({ defaultValue: value });
+					this.setState({ email: value });
 					console.log(value);
 				}
 			}).done();
@@ -98,6 +97,8 @@ class LoginForm extends Component {
 
 		firebase.auth().createUserWithEmailAndPassword(email, password)
 			.then(() => {		//Sign Up a user successfully
+				// On successful login, store the username in async storage
+				this.saveToStorage('user', email).done();
 				this.setState({
 					email: '',
 					password: '',
@@ -121,7 +122,7 @@ class LoginForm extends Component {
 
 				<CardSection>
 					<Input
-						defaultValue={this.state.defaultValue}
+						defaultValue={this.state.email}
 						value={this.state.email}
 						onChangeText={email => this.setState({ email })}
 						label='Email'
